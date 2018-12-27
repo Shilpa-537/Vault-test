@@ -1,0 +1,16 @@
+pipeline {
+  // define the secrets and the env variables
+  def secrets = [
+      [$class: 'VaultSecret', path: 'secret/hello', secretValues: [
+          [$class: 'VaultSecretValue', envVar: 'testing', vaultKey: 'foo']]],
+  ]
+
+  def configuration = [$class: 'VaultConfiguration',
+                       vaultUrl: 'http://10.7.1.242:8200',
+                       vaultCredentialId: '7cSHqf2d1XgbwtoXS7hPST18']
+
+  // inside this block your credentials will be available as env variables
+  wrap([$class: 'VaultBuildWrapper', configuration: configuration, vaultSecrets: secrets]) {
+      sh 'echo $testing'
+  }
+}
